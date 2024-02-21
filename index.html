@@ -1,17 +1,13 @@
 <!--
 (30 puntos) [Criterio subjetivo] Según qué tan interesante es el diseño de su interfaz
-(20 puntos) [Criterio subjetivo] Según qué tan amigable sea su interfaz en dispositivos tanto móviles como de escritorio
-
 (10 puntos) Auto-refresh de la lista de mensajes (no puede ser menor a 5 segundos)
 (20 puntos) Por preservar el scroll después de recibir nuevos mensajes
+(20 puntos) Por implementar async y await de una manera semanticamente correcta
 
 
 (15 puntos) Por ofrecer la opción de cambiar entre un tema claro y oscuro, recordando la preferencia del usuario en visitas futuras usando localStorage.
-(20 puntos) Por implementar async y await de una manera semanticamente correcta
-
+(20 puntos) [Criterio subjetivo] Según qué tan amigable sea su interfaz en dispositivos tanto móviles como de escritorio
 (10 puntos) Por realizar al menos una animación en la pantalla utilizando javascript
-
-
 (10 puntos) Por colocar el campo de texto para escribir el mensaje en la parte inferior de la pantalla (no debe ocultarse cuando hay muchos mensajes)
 (10 puntos) Por limitar la cantidad de caracteres permitidos a 140 en cada mensaje 
 (10 puntos) Por agregar hacer "submit" del mensaje utilizando "Enter" 
@@ -31,50 +27,91 @@
         // Cantidad máxima de caracteres
         const max_caracteres = 140;
     
+        // Variable para controlar el tema
+        let temaOscuro = false;
+    
+        // Función para cambiar el tema
+        function cambiarTema() {
+            temaOscuro = !temaOscuro;
+            const colorFondo = temaOscuro ? '#333333' : '#87CEEB';
+            const colorTexto = temaOscuro ? '#ffffff' : '#000000';
+            const imagenURL = temaOscuro ? 'https://www.svgrepo.com/show/432507/light-mode.svg' : 'https://cdn.icon-icons.com/icons2/1303/PNG/512/sun_85879.png';
+    
+            document.body.style.backgroundColor = colorFondo;
+            document.body.style.color = colorTexto;
+            contenedorPrincipal.style.borderColor = colorTexto;
+            botonT.style.background = colorFondo;
+            imagen.src = imagenURL;
+        }
+    
         // Cambiar color del fondo
-        document.body.style.cssText = 'background-color: #87CEEB; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;';
+        document.body.style.cssText = 'background-color: #87CEEB; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; color: #000000;';
     
         // Contenedor principal
         var contenedorPrincipal = document.createElement('div');
-        contenedorPrincipal.style.cssText = 'display: flex; flex-direction: column; align-items: center;';
+        contenedorPrincipal.style.cssText = 'display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 600px; box-sizing: border-box; padding: 10px; height: calc(100vh - 40px); overflow: hidden;';
     
         // Contenedor de mensajes chat
         const listado_chat = document.createElement('ul');
-        listado_chat.style.cssText = 'list-style-type: none; padding: 0; width: 100%; max-width: 400px; margin-bottom: 20px; background: white; border-radius: 5px; border: 1px solid black; overflow-y: auto; overflow-x: auto;';
-    
+        listado_chat.style.cssText = 'list-style-type: none; padding: 0; width: 100%; box-sizing: border-box; flex: 1 1 50%; overflow-y: auto; overflow-x: auto;';
+
         // Contenedor para botones
         var contenedorBotones = document.createElement('div');
-        contenedorBotones.style.cssText = 'display: flex; margin-top: auto;';
-    
+        contenedorBotones.style.cssText = 'display: flex; margin-top: 10px; width: 100%; box-sizing: border-box;';
+
         // Botón para cambio de tema
         var botonT = document.createElement('button');
         var imagen = document.createElement('img');
-        imagen.src = 'https://cdn.icon-icons.com/icons2/3250/PNG/512/dark_theme_filled_icon_201473.png';
+        imagen.src = 'https://cdn.icon-icons.com/icons2/1303/PNG/512/sun_85879.png';
         imagen.alt = 'Icono';
         imagen.style.width = '50px';
         botonT.appendChild(imagen);
-        const { src, alt, style } = imagen;
-        botonT.style.cssText = 'margin-right: 5px; background: transparent; border-radius: 5px; border: 1px solid black;';
-    
+        botonT.style.cssText = 'margin-right: 5px; background: #87CEEB; border-radius: 5px; border: 1px solid black; transition: all 0.3s ease;';
+
+        // Eventos para la animación
+        botonT.addEventListener('mouseover', function() {
+            botonT.style.transform = 'scale(1.1)';
+        });
+
+        botonT.addEventListener('mouseout', function() {
+            botonT.style.transform = 'scale(1)';
+        });
+
+        // Evento de clic para cambiar el tema
+        botonT.addEventListener('click', cambiarTema);
+
         // Cuadro de texto -> tipo, texto fondo, color fondo, radio borde y color texto escrito
         var inputText = document.createElement('input');
         inputText.type = 'text';
         inputText.placeholder = 'Ingresa texto';
-        inputText.style.cssText = 'margin: 0 5px; background-color: white; border: 1px solid black; border-radius: 5px; color: black; margin-top: 10px;';
-        inputText.maxLength = max_caracteres;
-    
+        inputText.style.cssText = 'margin: 0 5px; flex: 1; background-color: white; border: 1px solid black; border-radius: 5px; color: black;';
+
         // Botón para enviar
         var botonSend = document.createElement("button");
         botonSend.textContent = "Enviar";
-        botonSend.style.cssText = 'margin-left: 5px; margin-top: 10px; border-radius: 5px; border: 1px solid black; background-color: white;';
-    
+        botonSend.style.cssText = 'margin-left: 5px; border-radius: 5px; border: 1px solid black; background-color: white; transition: transform 0.3s ease;';
+
+        // Eventos para la animación de aumento de tamaño
+        botonSend.addEventListener('mouseover', function() {
+            botonSend.style.transform = 'scale(1.1)';
+        });
+
+        botonSend.addEventListener('mouseout', function() {
+            botonSend.style.transform = 'scale(1)';
+        });
+
+        botonSend.addEventListener('click', function() {
+            // Llama a la función que maneja el envío del mensaje
+            enviarMensaje();
+        });
+
         // Evento de escucha para el evento input
         inputText.addEventListener('input', function () {
             if (inputText.value.length > max_caracteres) {
                 inputText.value = inputText.value.substring(0, max_caracteres);
             }
         });
-    
+
         // Evento de escucha para el evento keypress
         inputText.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
@@ -82,57 +119,49 @@
                 enviarMensaje();
             }
         });
-    
+
         // Función para detectar enlaces en el texto
         function detectarEnlace(texto) {
             const regexEnlace = /(http[s]?:\/\/[^\s]+)/g;
             return texto.replace(regexEnlace, '<a href="$1" target="_blank">$1</a>');
         }
-    
+
         // Función para detectar enlaces de imágenes en el texto
         function detectarImagen(texto) {
             const regexImagen = /(http[s]?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif))/g;
             return texto.replace(regexImagen, '<img src="$1" alt="Imagen">');
         }
-    
+
         // Función para enviar mensajes
         function enviarMensaje() {
             // Obtiene el texto del input
             const mensaje = inputText.value;
-    
+
             // Crea un nuevo elemento de lista
             const nuevoMensaje = document.createElement('li');
-    
+
             // Combina el texto con enlaces y vistas previas de imágenes
             const mensajeConEnlaces = detectarEnlace(mensaje);
             const mensajeConImagenes = detectarImagen(mensajeConEnlaces);
-    
+
             // Asigna el HTML al elemento de lista
             nuevoMensaje.innerHTML = mensajeConImagenes;
-    
+
             // Agrega el nuevo mensaje a la lista de chat
             listado_chat.appendChild(nuevoMensaje);
-    
+
             // Limpia el cuadro de texto después de enviar el mensaje
             inputText.value = '';
         }
 
-
-        // Agrega los elementos al contenedor de botones
+        // Agrega los elementos al DOM
         contenedorBotones.appendChild(botonT);
         contenedorBotones.appendChild(inputText);
         contenedorBotones.appendChild(botonSend);
-    
-        // Agrega los elementos al contenedor principal
         contenedorPrincipal.appendChild(listado_chat);
         contenedorPrincipal.appendChild(contenedorBotones);
-    
-        // Agrega el contenedor principal al cuerpo del documento
         document.body.appendChild(contenedorPrincipal);
     </script>
-    
-
-    
     
 </body>
 </html>
