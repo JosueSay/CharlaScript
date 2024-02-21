@@ -1,0 +1,138 @@
+<!--
+(30 puntos) [Criterio subjetivo] Según qué tan interesante es el diseño de su interfaz
+(20 puntos) [Criterio subjetivo] Según qué tan amigable sea su interfaz en dispositivos tanto móviles como de escritorio
+
+(10 puntos) Auto-refresh de la lista de mensajes (no puede ser menor a 5 segundos)
+(20 puntos) Por preservar el scroll después de recibir nuevos mensajes
+
+
+(15 puntos) Por ofrecer la opción de cambiar entre un tema claro y oscuro, recordando la preferencia del usuario en visitas futuras usando localStorage.
+(20 puntos) Por implementar async y await de una manera semanticamente correcta
+
+(10 puntos) Por realizar al menos una animación en la pantalla utilizando javascript
+
+
+(10 puntos) Por colocar el campo de texto para escribir el mensaje en la parte inferior de la pantalla (no debe ocultarse cuando hay muchos mensajes)
+(10 puntos) Por limitar la cantidad de caracteres permitidos a 140 en cada mensaje 
+(10 puntos) Por agregar hacer "submit" del mensaje utilizando "Enter" 
+(10 puntos) Por utilizar deconstrucción de objetos al menos una vez
+(30 puntos) Por detectar un link a una página web dentro del texto y crear una preview en la lista de mensajes (no puede ser un iframe)
+(20 puntos) Por detectar un link a una imagen dentro del texto y crear una preview en la lista de mensajes
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatScript</title>
+</head>
+<body>
+    <script type="text/javascript">
+        // Cantidad máxima de caracteres
+        const max_caracteres = 140;
+    
+        // Cambiar color del fondo
+        document.body.style.cssText = 'background-color: #87CEEB; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;';
+    
+        // Contenedor principal
+        var contenedorPrincipal = document.createElement('div');
+        contenedorPrincipal.style.cssText = 'display: flex; flex-direction: column; align-items: center;';
+    
+        // Contenedor de mensajes chat
+        const listado_chat = document.createElement('ul');
+        listado_chat.style.cssText = 'list-style-type: none; padding: 0; width: 100%; max-width: 400px; margin-bottom: 20px; background: white; border-radius: 5px; border: 1px solid black; overflow-y: auto; overflow-x: auto;';
+    
+        // Contenedor para botones
+        var contenedorBotones = document.createElement('div');
+        contenedorBotones.style.cssText = 'display: flex; margin-top: auto;';
+    
+        // Botón para cambio de tema
+        var botonT = document.createElement('button');
+        var imagen = document.createElement('img');
+        imagen.src = 'https://cdn.icon-icons.com/icons2/3250/PNG/512/dark_theme_filled_icon_201473.png';
+        imagen.alt = 'Icono';
+        imagen.style.width = '50px';
+        botonT.appendChild(imagen);
+        const { src, alt, style } = imagen;
+        botonT.style.cssText = 'margin-right: 5px; background: transparent; border-radius: 5px; border: 1px solid black;';
+    
+        // Cuadro de texto -> tipo, texto fondo, color fondo, radio borde y color texto escrito
+        var inputText = document.createElement('input');
+        inputText.type = 'text';
+        inputText.placeholder = 'Ingresa texto';
+        inputText.style.cssText = 'margin: 0 5px; background-color: white; border: 1px solid black; border-radius: 5px; color: black; margin-top: 10px;';
+        inputText.maxLength = max_caracteres;
+    
+        // Botón para enviar
+        var botonSend = document.createElement("button");
+        botonSend.textContent = "Enviar";
+        botonSend.style.cssText = 'margin-left: 5px; margin-top: 10px; border-radius: 5px; border: 1px solid black; background-color: white;';
+    
+        // Evento de escucha para el evento input
+        inputText.addEventListener('input', function () {
+            if (inputText.value.length > max_caracteres) {
+                inputText.value = inputText.value.substring(0, max_caracteres);
+            }
+        });
+    
+        // Evento de escucha para el evento keypress
+        inputText.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                // Llama a la función que maneja el envío del mensaje
+                enviarMensaje();
+            }
+        });
+    
+        // Función para detectar enlaces en el texto
+        function detectarEnlace(texto) {
+            const regexEnlace = /(http[s]?:\/\/[^\s]+)/g;
+            return texto.replace(regexEnlace, '<a href="$1" target="_blank">$1</a>');
+        }
+    
+        // Función para detectar enlaces de imágenes en el texto
+        function detectarImagen(texto) {
+            const regexImagen = /(http[s]?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif))/g;
+            return texto.replace(regexImagen, '<img src="$1" alt="Imagen">');
+        }
+    
+        // Función para enviar mensajes
+        function enviarMensaje() {
+            // Obtiene el texto del input
+            const mensaje = inputText.value;
+    
+            // Crea un nuevo elemento de lista
+            const nuevoMensaje = document.createElement('li');
+    
+            // Combina el texto con enlaces y vistas previas de imágenes
+            const mensajeConEnlaces = detectarEnlace(mensaje);
+            const mensajeConImagenes = detectarImagen(mensajeConEnlaces);
+    
+            // Asigna el HTML al elemento de lista
+            nuevoMensaje.innerHTML = mensajeConImagenes;
+    
+            // Agrega el nuevo mensaje a la lista de chat
+            listado_chat.appendChild(nuevoMensaje);
+    
+            // Limpia el cuadro de texto después de enviar el mensaje
+            inputText.value = '';
+        }
+
+
+        // Agrega los elementos al contenedor de botones
+        contenedorBotones.appendChild(botonT);
+        contenedorBotones.appendChild(inputText);
+        contenedorBotones.appendChild(botonSend);
+    
+        // Agrega los elementos al contenedor principal
+        contenedorPrincipal.appendChild(listado_chat);
+        contenedorPrincipal.appendChild(contenedorBotones);
+    
+        // Agrega el contenedor principal al cuerpo del documento
+        document.body.appendChild(contenedorPrincipal);
+    </script>
+    
+
+    
+    
+</body>
+</html>
